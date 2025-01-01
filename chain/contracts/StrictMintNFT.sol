@@ -7,9 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract StrictMintNFT is ERC721, Ownable {
     uint256 public constant MAX_SUPPLY = 40;
-    uint256 public constant FIRST_TIER_PRICE = 0.00000005 ether;
-    uint256 public constant SECOND_TIER_PRICE = 0.0006 ether;
-    uint256 public constant CUSTOM_NAME_PRICE = 0.0004 ether;
+
+    uint256 public firstTierPrice = 0.00000005 ether;
+    uint256 public secondTierPrice = 0.0006 ether;
+    uint256 public customNamePrice = 0.0004 ether;
 
     uint256 private _tokenIdCounter = 0;
     uint256 public firstTierRemaining = 15;
@@ -17,6 +18,8 @@ contract StrictMintNFT is ERC721, Ownable {
     mapping(address => uint256) public mintCount;
 
     MintNFT public mintNFTContract;
+
+    event MintedNFT(uint256 indexed tokenId, address indexed owner, string customName);
 
     constructor(address mintNFTContractAddress) Ownable(msg.sender) ERC721("StrictMintNFT", "MNTR") {
         mintNFTContract = MintNFT(mintNFTContractAddress);
@@ -31,15 +34,15 @@ contract StrictMintNFT is ERC721, Ownable {
 
         for (uint256 i = 0; i < quantity; i++) {
             if (firstTierRemaining > 0) {
-                totalCost += FIRST_TIER_PRICE;
+                totalCost += firstTierPrice;
                 firstTierRemaining--;
             } else {
-                totalCost += SECOND_TIER_PRICE;
+                totalCost += secondTierPrice;
             }
         }
 
         for (uint256 j = 0; j < names.length; j++) {
-            totalCost += CUSTOM_NAME_PRICE;
+            totalCost += customNamePrice;
         }
 
         require(msg.value >= totalCost, "Insufficient funds sent.");
@@ -49,16 +52,25 @@ contract StrictMintNFT is ERC721, Ownable {
             _tokenIdCounter++;
             _safeMint(msg.sender, tokenId);
 
-            if (k < names.length) {
-                customNames[tokenId] = names[k];
-            }
+            string memory customName = k < names.length ? names[k] : "";
+            customNames[tokenId] = customName;
+
+            emit MintedNFT(tokenId, msg.sender, customName);
         }
+    }
+
+    function setPrices(uint256 _firstTierPrice, uint256 _secondTierPrice, uint256 _customNamePrice) external onlyOwner {
+        firstTierPrice = _firstTierPrice;
+        secondTierPrice = _secondTierPrice;
+        customNamePrice = _customNamePrice;
     }
 
     function setCustomName(uint256 tokenId, string calldata name) external payable {
         require(ownerOf(tokenId) == msg.sender, "You do not own this NFT.");
-        require(msg.value >= CUSTOM_NAME_PRICE, "Insufficient funds sent for name change.");
+        require(msg.value >= customNamePrice, "Insufficient funds sent for name change.");
 
         customNames[tokenId] = name;
+
+        emit MintedNFT(tokenId, msg.sender, name);
     }
 }
