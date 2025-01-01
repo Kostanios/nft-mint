@@ -2,11 +2,18 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	nftmint "github.com/kostanios/nft-mint/webapi/src/routes"
 	"log"
 	"net/http"
 	"os"
 )
+
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Print("No .env file found")
+	}
+}
 
 func main() {
 	r := mux.NewRouter()
@@ -14,9 +21,14 @@ func main() {
 	r.HandleFunc("/nft-mint", nftmint.MintNFTHandler).Methods("POST")
 	//r.HandleFunc("/strict-nft-mint", MintNFT2Handler).Methods("POST")
 
-	port := os.Getenv("PORT")
-	if port == "" {
+	port, portExists := os.LookupEnv("PORT")
+	if !portExists {
 		port = "8080"
+	}
+
+	_, chainURLExists := os.LookupEnv("CHAIN_API_URL")
+	if !chainURLExists {
+		log.Fatalf("ChainURL is incorrect")
 	}
 
 	log.Printf("Server starting on port %s...", port)
