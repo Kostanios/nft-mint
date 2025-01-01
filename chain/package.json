@@ -1,0 +1,26 @@
+{
+  "name": "chain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "18.19.0"
+  },
+  "scripts": {
+    "DeployMintNFT": "npx hardhat run scripts/MintNFT/deploy.js --network sepolia",
+    "DeployStrictMintNFT": "npx hardhat run scripts/StrictMintNFT/deploy.js --network sepolia",
+    "sepoliatest": "npx hardhat run scripts/test.js --network sepolia"
+  },
+  "keywords": [],
+  "author": "Constantine",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "5.1.0",
+    "dotenv": "16.4.7"
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "2.2.3",
+    "ethers": "5.7.2",
+    "hardhat": "2.22.17"
+  }
+}
