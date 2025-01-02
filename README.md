@@ -1,5 +1,3 @@
-# NFT Mint Project
-
 # NFT Minting Project
 
 This project involves the development of two smart contracts deployed on the Sepolia test network, a backend service written in GoLang, and a frontend interface using Next.js and TailwindCSS for minting and managing NFTs. Below is the detailed description of the project components and their functionalities.
