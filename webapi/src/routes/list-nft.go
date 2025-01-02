@@ -42,15 +42,17 @@ func ListNFTsHandler(w http.ResponseWriter, r *http.Request) {
 func ListNFTs(client *ethclient.Client, contract1Address, contract2Address string) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 
+	auth, err := blockchainutils.GetAuthTransactor()
+
 	contract1, err := abi.NewMintNFT(common.HexToAddress(contract1Address), client)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load first contract: %v", err)
 	}
-	counter1, err := contract1.TokenIdCounter(nil)
+	haveToken, err := contract1.HasMinted(nil, auth.From)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch counter from first contract: %v", err)
 	}
-	result["mintContractCounter"] = counter1.Int64()
+	result["mintContractNFT"] = haveToken
 
 	contract2, err := abi.NewStrictMintNFT(common.HexToAddress(contract2Address), client)
 	if err != nil {

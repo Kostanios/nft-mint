@@ -32,6 +32,7 @@ func GetAuthTransactor() (*bind.TransactOpts, error) {
 	}
 
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainId))
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create transactor: %v", err)
 	}

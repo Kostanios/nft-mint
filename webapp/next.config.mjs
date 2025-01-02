@@ -4,6 +4,9 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
+  env: {
+    WEBAPI: process.env.WEBAPI,
+  },
 }
 
 export default nextConfig
