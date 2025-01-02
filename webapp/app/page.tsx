@@ -17,6 +17,8 @@ export default function IndexPage() {
   const [nftData, setNftData] = useState<null | NFTData>(null);
   const [nftDataLoading, setNftDataLoading] = useState(false);
   const [mintLoading, setMintLoading] = useState(false);
+  const [mintError, setMintError] = useState(false);
+  const [strictMintError, setStrictMintError] = useState(false)
 
   const form = useForm<z.infer<typeof StrictNftFormSchema>>({
     resolver: zodResolver(StrictNftFormSchema),
@@ -29,14 +31,19 @@ export default function IndexPage() {
   const fetchAfterSleep = () => setTimeout(() => fetchNFTData().then(data => {
     setNftData(data);
     setNftDataLoading(false);
-  }), 6000)
+  }), 8000)
 
   function onSubmit(data: z.infer<typeof StrictNftFormSchema>) {
     setMintLoading(true);
-    strictMintNFT(data).then(() => {
+    strictMintNFT(data).then((res) => {
+      if (res.ok) {
+        setNftDataLoading(true);
+        fetchAfterSleep();
+        setStrictMintError(false);
+      } else {
+        setStrictMintError(true);
+      }
       setMintLoading(false);
-      setNftDataLoading(true);
-      fetchAfterSleep();
     })
   }
 
@@ -51,9 +58,14 @@ export default function IndexPage() {
 
   const mintCallback = useCallback(async () => {
     setMintLoading(true);
-    await mintNFT().then(() => {
-      setNftDataLoading(true);
-      fetchAfterSleep();
+    await mintNFT().then((res) => {
+      if (res.ok) {
+        fetchAfterSleep();
+        setMintError(false);
+        setNftDataLoading(true);
+      } else {
+        setMintError(true);
+      }
     });
     setMintLoading(false);
   } ,[])
@@ -64,11 +76,12 @@ export default function IndexPage() {
     <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10 min-h-80">
       <div className="flex flex-col items-center gap-2">
         <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl pb-10">
-          {`Mint Contract NFT${nftData?.mintContractNFT ? ' (Received) ' : '' }${nftDataLoading ? ': Awaiting Transaction' : ''}`}
+          {`Mint NFT Contract${nftData?.mintContractNFT ? ' (Received) ' : ''}${nftDataLoading && !nftData?.mintContractNFT ? ': Awaiting Transaction' : ''}`}
         </h1>
-        <Button disabled={mintLoading} className={buttonVariants()} onClick={mintCallback}>
+        <Button disabled={mintLoading || nftDataLoading} className={buttonVariants()} onClick={mintCallback}>
           {!mintLoading ? "Mint NFT" : "Loading"}
         </Button>
+        <p className="p-5 h-5 text-red-600 text-center max-w-96">{mintError ? 'Transaction error, please check your funds for gas or your wallet already has a NFT' : ''}</p>
       </div>
 
       <div className="h-1 bg-amber-50 w-full"/>
@@ -138,6 +151,11 @@ export default function IndexPage() {
             </form>
           </FormProvider>
         </div>
+        <p
+          className="p-5 h-5 text-red-600 text-center max-w-96"
+        >
+          {strictMintError ? 'Transaction error, your have not enough funds for gas/fee or nft limit reached' : ''}
+        </p>
       </div>}
     </section>
   )
