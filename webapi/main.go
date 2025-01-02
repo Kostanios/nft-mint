@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	nftmint "github.com/kostanios/nft-mint/webapi/src/routes"
+	endpoints "github.com/kostanios/nft-mint/webapi/src/routes"
 	services "github.com/kostanios/nft-mint/webapi/src/services/blockchain"
 	"log"
 	"net/http"
@@ -19,8 +19,9 @@ func init() {
 func main() {
 	r := mux.NewRouter()
 
-	r.HandleFunc("/nft-mint", nftmint.MintNFTHandler).Methods("POST")
-	r.HandleFunc("/strict-nft-mint", nftmint.StrictMintNFTHandler).Methods("POST")
+	r.HandleFunc("/nft-mint", endpoints.MintNFTHandler).Methods("POST")
+	r.HandleFunc("/strict-nft-mint", endpoints.StrictMintNFTHandler).Methods("POST")
+	r.HandleFunc("/list-nft", endpoints.ListNFTsHandler).Methods("POST")
 
 	port, portExists := os.LookupEnv("PORT")
 	if !portExists {

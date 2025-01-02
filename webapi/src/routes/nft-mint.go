@@ -1,45 +1,18 @@
-package nftmint
+package endpoints
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/kostanios/nft-mint/webapi/src/utils/abi"
-	"math/big"
+	blockchainutils "github.com/kostanios/nft-mint/webapi/src/utils/blockchain"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 func MintNFT(client *ethclient.Client, contractAddress string) (string, error) {
-	PrivateKey, PrivateKeyExists := os.LookupEnv("PRIVATE_KEY")
-	if !PrivateKeyExists {
-		return "", errors.New("private key is not exist")
-	}
-
-	privateKey, err := crypto.HexToECDSA(PrivateKey)
-	if err != nil {
-		return "", errors.New("invalid private key")
-	}
-
-	ChainId, ChainIdExists := os.LookupEnv("CHAIN_ID")
-	if !ChainIdExists {
-		return "", errors.New("chain id is incorrect")
-	}
-
-	chainId, err := strconv.ParseInt(ChainId, 10, 64)
-	if err != nil {
-		panic(err)
-	}
-
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(chainId))
-	if err != nil {
-		return "", fmt.Errorf("failed to create transactor: %v", err)
-	}
+	auth, err := blockchainutils.GetAuthTransactor()
 
 	contractAddr := common.HexToAddress(contractAddress)
 	instance, err := abi.NewMintNFT(contractAddr, client)
@@ -56,17 +29,7 @@ func MintNFT(client *ethclient.Client, contractAddress string) (string, error) {
 }
 
 func MintNFTHandler(w http.ResponseWriter, r *http.Request) {
-	ChainURL, chainURLExists := os.LookupEnv("CHAIN_API_URL")
-	if !chainURLExists {
-		http.Error(w, "ChainURL is incorrect", http.StatusInternalServerError)
-		return
-	}
-
-	client, err := ethclient.Dial(ChainURL)
-	if err != nil {
-		http.Error(w, "Failed to connect to Ethereum client", http.StatusInternalServerError)
-		return
-	}
+	client := blockchainutils.GetEthClient()
 	defer client.Close()
 
 	MintContractAddress, MintContractAddressExists := os.LookupEnv("MINT_NFT_CONTRACT_ADDRESS")
