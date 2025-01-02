@@ -3,24 +3,28 @@
 
 Usage:
 1) fill env file (you can take mine except Private Key from your sepolia wallet)
-2) test your connection to sepolia 
+2) install deps
+```npm
+npm i
+```
+3) test your connection to sepolia 
 ```npm
 npm run sepoliatest
 ```
-3) Compile the smart contracts
+4) Compile the smart contracts
 ```npm
 npm run compile
 ```
-4) deploy first contract, get it's address and put into MINT_NFT_CONTRACT_ADDRESS var
+5) deploy first contract, get it's address and put into MINT_NFT_CONTRACT_ADDRESS var
 ```npm
 npm run deploymintnft
 ```
-5) deploy second contract and save it's address somewhere - we need that to fill golang repo env
+6) deploy second contract and save it's address somewhere - we need that to fill golang repo env
 ```npm
 npm run deploystrictmintnft
 ```
 
-6) pls go to go repo readme file
+7) pls go to go repo readme file
 
 My deployed contracts
 MintNFT Contract
