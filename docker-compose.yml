@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./webapp:/app
+      - /app/node_modules
+    depends_on:
+      - webapi
+
+  webapi:
+    build:
+      context: ./webapi
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - GO_ENV=development
+    volumes:
+      - ./webapi:/app
+    command: ["sh", "-c", "go run main.go"]
+
+networks:
+  default:
+    name: monorepo-network

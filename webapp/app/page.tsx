@@ -73,7 +73,7 @@ export default function IndexPage() {
 
       <div className="h-1 bg-amber-50 w-full"/>
 
-      <div className="flex flex-col items-center gap-2">
+      {nftData?.mintContractNFT && <div className="flex flex-col items-center gap-2">
         <h1 className="text-3xl font-bold leading-tight tracking-tighter md:text-4xl pb-10">
           {`Strict Mint Contract NFT${nftDataLoading && strictMintContractCounter > 0 ? ': Awaiting Transaction' : ''}`}
         </h1>
@@ -85,8 +85,9 @@ export default function IndexPage() {
                   <div className="p-1">
                     <Card>
                       <CardContent className="flex flex-col aspect-square items-center justify-center p-4">
-                          <div className="text-xl font-semibold">{`NFT ${index}`}</div>
-                          <div className="font-semibold text-xs text-ellipsis overflow-hidden max-w-16">{nftData?.strictMintContractTokenNames[index]}</div>
+                        <div className="text-xl font-semibold">{`NFT ${index}`}</div>
+                        <div
+                          className="font-semibold text-xs text-ellipsis overflow-hidden max-w-16">{nftData?.strictMintContractTokenNames[index]}</div>
                       </CardContent>
                     </Card>
                   </div>
@@ -104,13 +105,14 @@ export default function IndexPage() {
               <FormField
                 control={form.control}
                 name="quantity"
-                render={({ field }) => (
+                render={({field}) => (
                   <FormItem>
                     <FormLabel>Quantity</FormLabel>
                     <FormControl>
-                      <Input min={1} max={5} type="number" placeholder="shadcn" {...field} onClick={() => form.trigger('names')} />
+                      <Input min={1} max={5} type="number" placeholder="shadcn" {...field}
+                             onClick={() => form.trigger('names')}/>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                   </FormItem>
                 )}
               />
@@ -127,7 +129,7 @@ export default function IndexPage() {
                       }}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage/>
                 </FormItem>
               ))}
               <Button type="submit" disabled={mintLoading} className={buttonVariants()}>
@@ -136,7 +138,7 @@ export default function IndexPage() {
             </form>
           </FormProvider>
         </div>
-      </div>
+      </div>}
     </section>
   )
 }
