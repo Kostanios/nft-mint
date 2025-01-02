@@ -11,8 +11,8 @@ contract StrictMintNFT is ERC721, Ownable {
     uint256 public firstTierPrice = 0.00000005 ether;
     uint256 public secondTierPrice = 0.0006 ether;
     uint256 public customNamePrice = 0.0004 ether;
+    uint256 public tokenIdCounter = 0;
 
-    uint256 private _tokenIdCounter = 0;
     uint256 public firstTierRemaining = 15;
     mapping(uint256 => string) public customNames;
     mapping(address => uint256) public mintCount;
@@ -27,7 +27,7 @@ contract StrictMintNFT is ERC721, Ownable {
 
     function mint(uint256 quantity, string[] calldata names) external payable {
         require(quantity > 0 && quantity <= 5, "You can mint between 1 and 5 NFTs.");
-        require(_tokenIdCounter + quantity <= MAX_SUPPLY, "Exceeds max supply.");
+        require(tokenIdCounter + quantity <= MAX_SUPPLY, "Exceeds max supply.");
         require(mintNFTContract.balanceOf(msg.sender) > 0, "You must own an NFT from the first contract.");
 
         uint256 totalCost = 0;
@@ -48,8 +48,8 @@ contract StrictMintNFT is ERC721, Ownable {
         require(msg.value >= totalCost, "Insufficient funds sent.");
 
         for (uint256 k = 0; k < quantity; k++) {
-            uint256 tokenId = _tokenIdCounter;
-            _tokenIdCounter++;
+            uint256 tokenId = tokenIdCounter;
+            tokenIdCounter++;
             _safeMint(msg.sender, tokenId);
 
             string memory customName = k < names.length ? names[k] : "";

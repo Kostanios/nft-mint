@@ -7,8 +7,9 @@
     "node": "18.19.0"
   },
   "scripts": {
-    "DeployMintNFT": "npx hardhat run scripts/MintNFT/deploy.js --network sepolia",
-    "DeployStrictMintNFT": "npx hardhat run scripts/StrictMintNFT/deploy.js --network sepolia",
+    "deploymintnft": "npx hardhat run scripts/MintNFT/deploy.js --network sepolia",
+    "deploystrictmintnft": "npx hardhat run scripts/StrictMintNFT/deploy.js --network sepolia",
+    "compile": "npx hardhat compile",
     "sepoliatest": "npx hardhat run scripts/test.js --network sepolia"
   },
   "keywords": [],
