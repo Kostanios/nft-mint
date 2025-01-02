@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract MintNFT is ERC721 {
     uint256 public constant MAX_SUPPLY = 100;
-    uint256 private _tokenIdCounter = 0;
+    uint256 public _tokenIdCounter = 0;
     mapping(address => bool) public hasMinted;
 
     constructor() ERC721("MintNFT", "MNT") {}
